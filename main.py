@@ -14,6 +14,8 @@ class GUI(tk.Frame):
         self.display = tk.Canvas(self, bd=0, highlightthickness=0, bg="pink")
         self.display.grid(row=0, sticky=tk.W + tk.E + tk.N + tk.S)
         self.pack(fill=tk.BOTH, expand=1)
+        self.status = "STATUS"
+        self.log = ["Line 1", "Line 2"]
         self.loadUI()
         self.drawUI()
         self.bind("<Configure>", self.resize)
@@ -39,18 +41,51 @@ class GUI(tk.Frame):
         bt4Img = Image.open(os.path.join(script_dir, "assets/bt4.png")).resize((80, 80))
         self.bt4Tk = ImageTk.PhotoImage(image=bt4Img)
 
+        box1Img = Image.open(os.path.join(script_dir, "assets/box1.png")).resize((300, 350))
+        self.box1Tk = ImageTk.PhotoImage(image=box1Img)
+        box2Img = Image.open(os.path.join(script_dir, "assets/box2.png")).resize((500, 200))
+        self.box2Tk = ImageTk.PhotoImage(image=box2Img)
+
     def drawUI(self):
         self.display.delete("GUI")
         self.display.create_image(10, self.size[1] - 10, anchor=tk.SW, image=self.leftTk, tags=["GUI"])
         self.display.create_image(self.size[0] - 10, self.size[1] - 10, anchor=tk.SE, image=self.rightTk, tags=["GUI"])
 
         self.display.create_image(86, self.size[1] - 84, anchor=tk.SW, image=self.holdTk, tags=["GUI", "HOLD"])
-        self.display.create_image(self.size[0] - 84, self.size[1] - 84, anchor=tk.SE, image=self.holdTk, tags=["GUI", "HOLD"])
+        self.display.create_image(
+            self.size[0] - 84, self.size[1] - 84, anchor=tk.SE, image=self.holdTk, tags=["GUI", "HOLD"]
+        )
 
         self.display.create_image(0, 30, anchor=tk.NW, image=self.bt1Tk, tags=["GUI"])
         self.display.create_image(0, 120, anchor=tk.NW, image=self.bt2Tk, tags=["GUI"])
         self.display.create_image(0, 210, anchor=tk.NW, image=self.bt3Tk, tags=["GUI"])
         self.display.create_image(0, 300, anchor=tk.NW, image=self.bt4Tk, tags=["GUI"])
+
+        self.display.create_rectangle(self.size[0] - 300, 0, self.size[0], 300, tags=["GUI"], fill="red")
+        self.display.create_image(self.size[0] - 300, 0, anchor=tk.NW, image=self.box1Tk, tags=["GUI"])
+        self.display.create_text(
+            self.size[0] - 150, 310, anchor=tk.N, text=self.status, font=("Arial", 16), tags=["GUI"]
+        )
+
+        self.display.create_image(self.size[0] / 2, self.size[1] - 200, anchor=tk.N, image=self.box2Tk, tags=["GUI"])
+        self.display.create_text(
+            self.size[0] / 2 - 230,
+            self.size[1] - 160,
+            anchor=tk.NW,
+            text="Log:",
+            font=("Arial", 16),
+            fill="white",
+            tags=["GUI"],
+        )
+        self.display.create_text(
+            self.size[0] / 2 - 230,
+            self.size[1] - 130,
+            anchor=tk.NW,
+            text="\n".join(self.log[-7:]),
+            font=("Arial", 12),
+            fill="white",
+            tags=["GUI"],
+        )
 
 
 root = tk.Tk()
