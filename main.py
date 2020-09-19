@@ -1,6 +1,7 @@
 import tkinter as tk
 from PIL import Image, ImageTk
 import os
+import cv2
 
 script_dir = os.path.dirname(__file__)
 
@@ -16,7 +17,9 @@ class GUI(tk.Frame):
         self.pack(fill=tk.BOTH, expand=1)
         self.status = "STATUS"
         self.log = ["Line 1", "Line 2"]
+        self.cap = cv2.VideoCapture(0)
         self.loadUI()
+        self.drawFrame()
         self.drawUI()
         self.bind("<Configure>", self.resize)
 
@@ -87,6 +90,16 @@ class GUI(tk.Frame):
             tags=["GUI"],
         )
 
+    def drawFrame(self):
+        _, frame = self.cap.read()
+        resizedFrame = cv2.resize(frame, (self.size))
+        cv2image = cv2.cvtColor(resizedFrame, cv2.COLOR_BGR2RGBA)
+        image = Image.fromarray(cv2image)
+        self.imgtk = ImageTk.PhotoImage(image)
+        self.display.delete("VID")
+        self.display.create_image(0, 0, image=self.imgtk, anchor=tk.NW, tags="VID")
+        self.drawUI()
+        self.after(10, self.drawFrame)
 
 root = tk.Tk()
 root.geometry("1280x720")
